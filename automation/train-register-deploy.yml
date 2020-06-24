@@ -20,7 +20,7 @@ variables:
   deployment_name: 'german-credit-api-aci-2'
 
   # Azure Resource Manager connection created during pipeline creation
-  azure_service_connection_name: 'aml_demo'
+  azure_service_connection_name: 'aml-demo'
 
 steps:
 - task: UsePythonVersion@0
