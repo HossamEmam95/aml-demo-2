@@ -9,15 +9,15 @@ pool:
   vmImage: 'Ubuntu-16.04'
 
 variables:
-  resourcegroup: 'aml-demo'
+  resourcegroup: 'hossam-aml-demo'
   workspace: 'aml-demo'
   aml_compute_target: 'cpu-cluster'
-  pipeline_name: 'training-pipeline'
-  dataset: 'german-credit-dataset'
-  dataset_test: 'german-credit-ci-test' # Dataset used for testing the training pipeline
+  pipeline_name: 'training-pipeline-2'
+  dataset: 'training_data'
+  dataset_test: 'training_data' # Dataset used for testing the training pipeline
 
   # Azure Resource Manager connection created during pipeline creation
-  azure_service_connection_name: 'aml_accelarator_svc_conn'
+  azure_service_connection_name: 'aml-demo'
 
 steps:
 - task: UsePythonVersion@0
