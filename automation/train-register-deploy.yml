@@ -18,7 +18,8 @@ variables:
   experiment: 'train-ci-2'
   model_name: 'german-credit'
   deployment_name: 'german-credit-api-aci-2'
-
+  dataset: "training_data"
+  dataset_test: "training_data"
   # Azure Resource Manager connection created during pipeline creation
   azure_service_connection_name: 'aml-demo'
 
