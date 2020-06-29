@@ -1,132 +1,88 @@
-import pickle
-from azureml.core import Workspace
-from azureml.core.run import Run
 import os
-from sklearn.datasets import load_diabetes
-from sklearn.linear_model import Ridge
-from sklearn.metrics import mean_squared_error
-from sklearn.model_selection import train_test_split
-from sklearn.externals import joblib
-import numpy as np
-import json
-import subprocess
-from typing import Tuple, List
+import sys
 import argparse
+import joblib
 import pandas as pd
 
+from azureml.core import Run
+from azureml.core.run import Run
 
+from sklearn.compose import ColumnTransformer
+from sklearn.impute import SimpleImputer
+from sklearn.linear_model import LogisticRegression
+from sklearn.model_selection import train_test_split
+from sklearn.pipeline import Pipeline
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import OneHotEncoder
+from sklearn.preprocessing import StandardScaler
 
-# run_history_name = 'devops-ai'
-# os.makedirs('./outputs', exist_ok=True)
-# #ws.get_details()
-# Start recording results to AML
-# run = Run.start_logging(workspace = ws, history_name = run_history_name)
-# run = Run.get_submitted_run()
 
 def getRuntimeArgs():
     parser = argparse.ArgumentParser()
     parser.add_argument('--data-path', type=str)
-    parser.add_argument('--step_output', type=str),
-    parser.add_argument('--model_name', type=str)
     args = parser.parse_args()
     return args
+
 
 def main():
     args = getRuntimeArgs()
     run = Run.get_context()
 
-    step_output_path = args.step_output
-    model_name = args.model_name
-
     credit_data_df = pd.read_csv(os.path.join(args.data_path, 'german_credit_data.csv'))
     clf = model_train(credit_data_df, run)
 
-    # #copying to "outputs" directory, automatically uploads it to Azure ML
-    # output_dir = './outputs/'
-    # os.makedirs(output_dir, exist_ok=True)
-    # joblib.dump(value=clf, filename=os.path.join(output_dir, 'model.pkl'))
-
-    # Pass model file to next step
-    os.makedirs(step_output_path, exist_ok=True)
-    model_output_path = os.path.join(step_output_path, model_name)
-    joblib.dump(value=clf, filename=model_output_path)
-
-    # Also upload model file to run outputs for history
-    os.makedirs('outputs', exist_ok=True)
-    output_path = os.path.join('outputs', model_name)
-    joblib.dump(value=clf, filename=output_path)
-
-    run.tag("run_type", value="train")
-    print(f"tags now present for run: {run.tags}")
-
+    #copying to "outputs" directory, automatically uploads it to Azure ML
+    output_dir = './outputs/'
+    os.makedirs(output_dir, exist_ok=True)
+    joblib.dump(value=clf, filename=os.path.join(output_dir, 'model.pkl'))
 
 def model_train(ds_df, run):
-    X, y = load_diabetes(return_X_y=True)
-    columns = ["age", "gender", "bmi", "bp", "s1", "s2", "s3", "s4", "s5", "s6"]
-    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=0)
-    data = {"train": {"X": X_train, "y": y_train}, "test": {"X": X_test, "y": y_test}}
 
-    print("Running train.py")
+    ds_df.drop("Sno", axis=1, inplace=True)
 
-    # Randomly pic alpha
-    alphas = np.arange(0.0, 1.0, 0.05)
-    alpha = alphas[np.random.choice(alphas.shape[0], 1, replace=False)][0]
-    print(alpha)
-    run.log("alpha", alpha)
-    reg = Ridge(alpha=alpha)
-    reg.fit(data["train"]["X"], data["train"]["y"])
-    preds = reg.predict(data["test"]["X"])
-    run.log("mse", mean_squared_error(preds, data["test"]["y"]))
+    y_raw = ds_df['Risk']
+    X_raw = ds_df.drop('Risk', axis=1)
 
+    categorical_features = X_raw.select_dtypes(include=['object']).columns
+    numeric_features = X_raw.select_dtypes(include=['int64', 'float']).columns
 
-    # # Save model as part of the run history
-    # model_name = "sklearn_regression_model.pkl"
-    # # model_name = "."
+    categorical_transformer = Pipeline(steps=[
+        ('imputer', SimpleImputer(strategy='constant', fill_value="missing")),
+        ('onehotencoder', OneHotEncoder(categories='auto', sparse=False))])
 
-    # with open(model_name, "wb") as file:
-    #     joblib.dump(value=reg, filename=model_name)
+    numeric_transformer = Pipeline(steps=[
+        ('scaler', StandardScaler())])
 
-    # # upload the model file explicitly into artifacts
-    # run.upload_file(name="./outputs/" + model_name, path_or_stream=model_name)
-    # print("Uploaded the model {} to experiment {}".format(model_name, run.experiment.name))
-    # dirpath = os.getcwd()
-    # print(dirpath)
+    feature_engineering_pipeline = ColumnTransformer(
+        transformers=[
+            ('numeric', numeric_transformer, numeric_features),
+            ('categorical', categorical_transformer, categorical_features)
+        ], remainder="drop")
 
-    # # model explain start
-    # from azureml.contrib.interpret.explanation.explanation_client import ExplanationClient
-    # from azureml.core.run import Run
-    # from interpret.ext.blackbox import TabularExplainer
+    # Encode Labels
+    le = LabelEncoder()
+    encoded_y = le.fit_transform(y_raw)
 
-    # run = Run.get_context()
-    # client = ExplanationClient.from_run(run)
+    # Train test split
+    X_train, X_test, y_train, y_test = train_test_split(X_raw, encoded_y, test_size=0.20, stratify=encoded_y, random_state=42)
 
-    # # explain predictions on your local machine
-    # # "features" and "classes" fields are optional
-    # explainer = TabularExplainer(reg, 
-    #                             X_train)
+    # Create sklearn pipeline
+    lr_clf = Pipeline(steps=[('preprocessor', feature_engineering_pipeline),
+                             ('classifier', LogisticRegression(solver="lbfgs"))])
+    # Train the model
+    lr_clf.fit(X_train, y_train)
 
-    # # explain overall model predictions (global explanation)
-    # global_explanation = explainer.explain_global(X_test)
+    # Capture metrics
+    train_acc = lr_clf.score(X_train, y_train)
+    test_acc = lr_clf.score(X_test, y_test)
+    print("Training accuracy: %.3f" % train_acc)
+    print("Test data accuracy: %.3f" % test_acc)
 
-    # # uploading global model explanation data for storage or visualization in webUX
-    # # the explanation can then be downloaded on any compute
-    # # multiple explanations can be uploaded
-    # client.upload_model_explanation(global_explanation, comment='global explanation: all features')
-    # # or you can only upload the explanation object with the top k feature info
-    # #client.upload_model_explanation(global_explanation, top_k=2, comment='global explanation: Only top 2 features')
-    # # model explain end
+    # Log to Azure ML
+    run.log('Train accuracy', train_acc)
+    run.log('Test accuracy', test_acc)
 
-
-    # # register the model
-    # # run.log_model(file_name = model_name)
-    # # print('Registered the model {} to run history {}'.format(model_name, run.history.name))
-
-
-    # print("Following files are uploaded ")
-    # print(run.get_file_names())
-    # run.complete()
-    return reg
-
+    return lr_clf
 
 if __name__ == "__main__":
     main()
