@@ -47,7 +47,7 @@ register_step = PythonScriptStep(name="Register Model ",
                         arguments=["--model_name", "model.pkl", "--step_input", "./outputs/", ],  # NOQA: E501
                         allow_reuse=False)
 
-
+register_step.run_after(train_step)
 steps = [train_step, register_step]
 
 print('Creating and validating pipeline')
