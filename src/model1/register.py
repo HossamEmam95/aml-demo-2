@@ -135,7 +135,7 @@ def main():
         print(f"Tags present: {parent_tags}")
 
     if (model is not None):
-        dataset_id = parent_tags["dataset_id"]
+        dataset_id = "8f63a3b1-2220-497c-aa9f-fdde6988ea0d"
         if (build_id is None):
             register_aml_model(
                 model_file,
