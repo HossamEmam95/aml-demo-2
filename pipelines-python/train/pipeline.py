@@ -35,12 +35,22 @@ training_dataset_consumption = DatasetConsumptionConfig("training_dataset", trai
 train_step = PythonScriptStep(name="train-step",
                         runconfig=runconfig,
                         source_directory=args.source_directory,
-                        script_name=runconfig.script,
+                        script_name=runconfig.train_script,
                         arguments=['--data-path', training_dataset_consumption],
                         inputs=[training_dataset_consumption],
                         allow_reuse=False)
 
-steps = [train_step]
+register_step = PythonScriptStep(name="Register Model ",
+                        runconfig=runconfig,
+                        script_name=runconfig.register_step,
+                        source_directory=args.source_directory,
+                        inputs=[pipeline_data],
+                        arguments=["--model_name", "model.pkl", "--step_input", "./outputs/", ],  # NOQA: E501
+                        runconfig=run_config,
+                        allow_reuse=False)
+
+
+steps = [train_step, register_step]
 
 print('Creating and validating pipeline')
 pipeline = Pipeline(workspace=ws, steps=steps)

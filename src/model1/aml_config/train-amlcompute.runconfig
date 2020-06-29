@@ -1,6 +1,7 @@
-script: train.py
+train_script: train.py
+register_step: register.py
 arguments: [--data-path, /data]
-target: cpu-cluster
+target: gpu-cluster
 framework: Python
 communicator: None
 nodeCount: 1
@@ -13,7 +14,7 @@ environment:
     condaDependenciesFile: aml_config/train-conda.yml
   docker:
     enabled: true
-    baseImage: mcr.microsoft.com/azureml/base:intelmpi2018.3-ubuntu16.04
+    baseImage: mcr.microsoft.com/azureml/base-gpu:openmpi3.1.2-cuda10.1-cudnn7-ubuntu18.04
     arguments: []
 mpi:
     processCountPerNode: 1
@@ -21,7 +22,7 @@ data:
   mydataset:
     dataLocation:
       dataset:
-        id: <PUT DATASET ID HERE>
+        id: 8f63a3b1-2220-497c-aa9f-fdde6988ea0d
     mechanism: mount
     pathOnCompute: /data
     environmentVariableName: mydataset
