@@ -3,7 +3,7 @@
 # * runs a small test training dataset through it for ensuring full functionality of the deployed ML pipeline
 
 trigger:
-- master
+- pipeline
 
 pool:
   vmImage: 'Ubuntu-16.04'
