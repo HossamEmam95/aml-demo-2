@@ -49,7 +49,7 @@ def main():
     # Pass model file to next step
     os.makedirs(step_output_path, exist_ok=True)
     model_output_path = os.path.join(step_output_path, model_name)
-    joblib.dump(value=model, filename=model_output_path)
+    joblib.dump(value=clf, filename=model_output_path)
 
     # Also upload model file to run outputs for history
     os.makedirs('outputs', exist_ok=True)
