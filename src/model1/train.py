@@ -26,6 +26,8 @@ import pandas as pd
 def getRuntimeArgs():
     parser = argparse.ArgumentParser()
     parser.add_argument('--data-path', type=str)
+    parser.add_argument('--step_output', type=str),
+    parser.add_argument('--model_name', type=str)
     args = parser.parse_args()
     return args
 
@@ -33,13 +35,29 @@ def main():
     args = getRuntimeArgs()
     run = Run.get_context()
 
+    step_output_path = args.step_output
+    model_name = args.model_name
+
     credit_data_df = pd.read_csv(os.path.join(args.data_path, 'german_credit_data.csv'))
     clf = model_train(credit_data_df, run)
 
-    #copying to "outputs" directory, automatically uploads it to Azure ML
-    output_dir = './outputs/'
-    os.makedirs(output_dir, exist_ok=True)
-    joblib.dump(value=clf, filename=os.path.join(output_dir, 'model.pkl'))
+    # #copying to "outputs" directory, automatically uploads it to Azure ML
+    # output_dir = './outputs/'
+    # os.makedirs(output_dir, exist_ok=True)
+    # joblib.dump(value=clf, filename=os.path.join(output_dir, 'model.pkl'))
+
+    # Pass model file to next step
+    os.makedirs(step_output_path, exist_ok=True)
+    model_output_path = os.path.join(step_output_path, model_name)
+    joblib.dump(value=model, filename=model_output_path)
+
+    # Also upload model file to run outputs for history
+    os.makedirs('outputs', exist_ok=True)
+    output_path = os.path.join('outputs', model_name)
+    joblib.dump(value=model, filename=output_path)
+
+    run.tag("run_type", value="train")
+    print(f"tags now present for run: {run.tags}")
 
 
 def model_train(ds_df, run):

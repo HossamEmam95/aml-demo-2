@@ -37,11 +37,12 @@ pipeline_data = PipelineData(
 )
 model_name_param = PipelineParameter(name="model_name", default_value="model.pkl")
 
+
 train_step = PythonScriptStep(name="train-step",
                         runconfig=runconfig,
                         source_directory=args.source_directory,
                         script_name=runconfig.script,
-                        arguments=['--data-path', training_dataset_consumption],
+                        arguments=['--data-path', training_dataset_consumption, '--step_output', pipeline_data, '--model_name', model_name_param, ],
                         inputs=[training_dataset_consumption],
                         outputs=[pipeline_data],
                         allow_reuse=False)
