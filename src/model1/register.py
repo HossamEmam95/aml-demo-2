@@ -32,6 +32,8 @@ import joblib
 from azureml.core import Run, Experiment, Workspace, Dataset
 from azureml.core.model import Model as AMLModel
 
+# /mnt/batch/tasks/shared/LS_root/jobs/aml-demo/azureml/eaac290a-4936-4911-ae96-9330b70bba17/mounts/workspaceblobstore/azureml/0edc76a7-2760-404a-964a-b67a7528bda8/pipeline_data
+# /mnt/batch/tasks/shared/LS_root/jobs/aml-demo/azureml/0edc76a7-2760-404a-964a-b67a7528bda8/mounts/workspaceblobstore/azureml/0edc76a7-2760-404a-964a-b67a7528bda8/pipeline_data
 
 def main():
 
@@ -107,9 +109,10 @@ def main():
     #         print(f"Could not find {tag} metric on parent run.")
 
     # load the model
-    print("Loading model from " + model_path)
-    model_file = os.path.join(model_path, model_name)
-    model = joblib.load(model_file)
+    output_path = os.path.join('outputs', model_name)
+    print("Loading model from " + output_path)
+    # model_file = model_path + "/model.pkl"
+    model = joblib.load(output_path)
     parent_tags = run.parent.get_tags()
     try:
         build_id = parent_tags["BuildId"]
