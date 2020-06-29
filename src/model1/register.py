@@ -113,12 +113,12 @@ def main():
 
     # data_store = Datastore.get_default(ws)
     data_store = Datastore.get(ws, datastore_name='modelstore')
-    data_store.download(target_path=".", prefix="model.pkl", overwrite=True)
+    data_store.download(target_path=".", prefix="model", overwrite=True)
     print("****************************************")
     print(os.listdir("./"))
     print("****************************************")
-    model_file = "./model.pkl"
-    model = joblib.load("./model.pkl")
+    model_file = "./model/model.pkl"
+    model = joblib.load(model_file)
 
     parent_tags = run.parent.get_tags()
     try:
