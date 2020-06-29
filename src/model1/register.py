@@ -111,7 +111,7 @@ def main():
     # load the model
     print("******************************************")
     print(os.listdir("."))
-    print(os.listdir(".."))
+    print(os.listdir("./outputs/"))
     print("******************************************")
     output_path = os.path.join('outputs', model_name)
     print("Loading model from " + output_path)
