@@ -113,11 +113,12 @@ def main():
 
     data_store = Datastore.get_default(ws)
     data_store.download(target_path=".", prefix="model.pkl", overwrite=True)
-    model_file = "./model.pkl"
-    model = joblib.load("./model.pkl")
     print("****************************************")
     print(os.listdir("./"))
     print("****************************************")
+    model_file = "./model.pkl"
+    model = joblib.load("./model.pkl")
+
     parent_tags = run.parent.get_tags()
     try:
         build_id = parent_tags["BuildId"]
