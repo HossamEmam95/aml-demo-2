@@ -31,6 +31,7 @@ import traceback
 import joblib
 from azureml.core import Run, Experiment, Workspace, Dataset
 from azureml.core.model import Model as AMLModel
+from azureml.core import Workspace, Experiment, Datastore
 
 
 def main():
@@ -108,12 +109,15 @@ def main():
 
     # load the model
     print("Loading model from " + model_path)
-    model_file = os.path.join(model_path, model_name)
-    print("****************************************")
-    print(model_file)
-    print("****************************************")
+    # model_file = os.path.join(model_path, model_name)
 
-    model = joblib.load(model_file)
+    data_store = Datastore.get_default(ws)
+    data_store.download(target_path=".", prefix="model.pkl", overwrite=True)
+    model_file = "./model.pkl"
+    model = joblib.load("./model.pkl")
+    print("****************************************")
+    print(os.listdir("./"))
+    print("****************************************")
     parent_tags = run.parent.get_tags()
     try:
         build_id = parent_tags["BuildId"]

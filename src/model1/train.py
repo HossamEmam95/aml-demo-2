@@ -2,6 +2,7 @@ import pickle
 from azureml.core import Workspace
 from azureml.core.run import Run
 import os
+from azureml.core import Workspace, Experiment, Datastore
 from sklearn.datasets import load_diabetes
 from sklearn.linear_model import Ridge
 from sklearn.metrics import mean_squared_error
@@ -43,22 +44,24 @@ def main():
     # output_dir = './outputs/'
     # os.makedirs(output_dir, exist_ok=True)
     # joblib.dump(value=clf, filename=os.path.join(output_dir, 'model.pkl'))
-    model_name = args.model_name
-    step_output_path = args.step_output
+    # model_name = args.model_name
+    # data_store = args.step_output
     # Pass model file to next step
-    os.makedirs(step_output_path, exist_ok=True)
-    model_output_path = os.path.join(step_output_path, model_name)
-    joblib.dump(value=clf, filename=model_output_path)
-
+    # os.makedirs(step_output_path, exist_ok=True)
+    # model_output_path = os.path.join(step_output_path, model_name)
+    joblib.dump(value=clf, filename="model.pkl")
+    ws = run.experiment.workspace
+    data_store = Datastore.get_default(ws)
+    data_store.upload(src_dir="model.pkl", target_path=".", overwrite=True)
     # Also upload model file to run outputs for history
-    os.makedirs('outputs', exist_ok=True)
-    output_path = os.path.join('outputs', model_output_path)
-    joblib.dump(value=clf, filename=output_path)
+    # os.makedirs('outputs', exist_ok=True)
+    # output_path = os.path.join('outputs', model_output_path)
+    # joblib.dump(value=clf, filename=output_path)
 
     run.tag("run_type", value="train")
     print(f"tags now present for run: {run.tags}")
     print("****************************************")
-    print(output_path)
+    print(os.listdir("./"))
     print("****************************************")
 
 
