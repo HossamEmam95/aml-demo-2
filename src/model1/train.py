@@ -47,7 +47,7 @@ def main():
     # model_name = args.model_name
     # data_store = args.step_output
     # Pass model file to next step
-    # os.makedirs(step_output_path, exist_ok=True)
+    os.makedirs("./model", exist_ok=True)
     # model_output_path = os.path.join(step_output_path, model_name)
     joblib.dump(value=clf, filename="./model/model.pkl")
     ws = run.experiment.workspace
