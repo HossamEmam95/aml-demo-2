@@ -41,7 +41,7 @@ train_step = PythonScriptStep(name="train-step",
                         runconfig=runconfig,
                         source_directory=args.source_directory,
                         script_name=runconfig.script,
-                        arguments=['--data-path', training_dataset_consumption, "--step_output", pipeline_data, ],
+                        arguments=['--data-path', training_dataset_consumption, "--step_output", pipeline_data, "--model_name", "model.pkl", ],
                         inputs=[training_dataset_consumption],
                         outputs=[pipeline_data],
                         allow_reuse=False)
@@ -51,7 +51,7 @@ register_step = PythonScriptStep(name="Register Model ",
                         script_name="./register.py",
                         source_directory=args.source_directory,
                         inputs=[pipeline_data],
-                        arguments=["--model_name", model_name_param, "--step_input", pipeline_data, "model_name", "model.pkl", ],  # NOQA: E501
+                        arguments=["--model_name", model_name_param, "--step_input", pipeline_data, "--model_name", "model.pkl", ],  # NOQA: E501
                         allow_reuse=False)
 
 register_step.run_after(train_step)

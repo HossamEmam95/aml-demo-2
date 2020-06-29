@@ -27,6 +27,8 @@ def getRuntimeArgs():
     parser = argparse.ArgumentParser()
     parser.add_argument('--data-path', type=str)
     parser.add_argument('--step_output', type=str)
+    parser.add_argument('--model_name', type=str)
+
     args = parser.parse_args()
     return args
 
