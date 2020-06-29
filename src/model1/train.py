@@ -49,10 +49,10 @@ def main():
     # Pass model file to next step
     # os.makedirs(step_output_path, exist_ok=True)
     # model_output_path = os.path.join(step_output_path, model_name)
-    joblib.dump(value=clf, filename="model.pkl")
+    joblib.dump(value=clf, filename="./model/model.pkl")
     ws = run.experiment.workspace
     data_store = Datastore.get_default(ws)
-    data_store.upload(src_dir="model.pkl", target_path=".", overwrite=True)
+    data_store.upload(src_dir="./model", target_path=".", overwrite=True)
     # Also upload model file to run outputs for history
     # os.makedirs('outputs', exist_ok=True)
     # output_path = os.path.join('outputs', model_output_path)
