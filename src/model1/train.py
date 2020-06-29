@@ -8,6 +8,7 @@ from sklearn.linear_model import Ridge
 from sklearn.metrics import mean_squared_error
 from sklearn.model_selection import train_test_split
 from sklearn.externals import joblib
+from azureml.core.authentication import AzureCliAuthentication
 import numpy as np
 import json
 import subprocess
@@ -48,7 +49,7 @@ def main():
     # data_store = args.step_output
     # Pass model file to next step
     ws = run.experiment.workspace
-
+    cli_auth = AzureCliAuthentication()
     datastore = Datastore.register_azure_blob_container(workspace=ws,
                                                         datastore_name='modelstore',
                                                         container_name='model',
@@ -60,22 +61,26 @@ def main():
     # # datastore = ws.get_default_datastore()
     # # print(datastore)
 
+
     os.makedirs("./model", exist_ok=True)
     # model_output_path = os.path.join(step_output_path, model_name)
     joblib.dump(value=clf, filename="./model/model.pkl")
     # data_store = Datastore.get_default(ws)
-    datastore.upload(src_dir="./model", target_path=".", overwrite=True)
+    print(f"tags now present for run: {run.tags}")
+    print("****************************************")
+    print(os.listdir("./"))
+    print(os.listdir("./model"))
+    print(datastore.name)
+    print("****************************************")
+
+    datastore.upload(src_dir="./model", target_path="model/", overwrite=True)
     # Also upload model file to run outputs for history
     # os.makedirs('outputs', exist_ok=True)
     # output_path = os.path.join('outputs', model_output_path)
     # joblib.dump(value=clf, filename=output_path)
 
     run.tag("run_type", value="train")
-    print(f"tags now present for run: {run.tags}")
-    print("****************************************")
-    print(os.listdir("./"))
-    print(datastore.name)
-    print("****************************************")
+
 
 
 def model_train(ds_df, run):
