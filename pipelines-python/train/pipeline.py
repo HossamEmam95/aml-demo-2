@@ -33,7 +33,7 @@ training_dataset_parameter = PipelineParameter(name="training_dataset", default_
 training_dataset_consumption = DatasetConsumptionConfig("training_dataset", training_dataset_parameter).as_mount()
 
 pipeline_data = PipelineData(
-    "pipeline_data", datastore=aml_workspace.get_default_datastore()
+    "pipeline_data", datastore=ws.get_default_datastore()
 )
 model_name_param = PipelineParameter(name="model_name", default_value="model.pkl")
 
