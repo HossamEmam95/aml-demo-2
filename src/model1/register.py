@@ -109,6 +109,10 @@ def main():
     # load the model
     print("Loading model from " + model_path)
     model_file = os.path.join(model_path, model_name)
+    print("****************************************")
+    print(model_file)
+    print("****************************************")
+
     model = joblib.load(model_file)
     parent_tags = run.parent.get_tags()
     try:
