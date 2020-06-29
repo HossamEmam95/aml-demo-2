@@ -62,6 +62,7 @@ def main():
     print(f"tags now present for run: {run.tags}")
     print("****************************************")
     print(os.listdir("./"))
+    print(data_store.name)
     print("****************************************")
 
 
