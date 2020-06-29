@@ -108,10 +108,11 @@ def main():
     #         print(f"Could not find {tag} metric on parent run.")
 
     # load the model
-    print("Loading model from " + model_path)
+    # print("Loading model from " + model_path)
     # model_file = os.path.join(model_path, model_name)
 
-    data_store = Datastore.get_default(ws)
+    # data_store = Datastore.get_default(ws)
+    data_store = Datastore.get(ws, datastore_name='modelstore')
     data_store.download(target_path=".", prefix="model.pkl", overwrite=True)
     print("****************************************")
     print(os.listdir("./"))

@@ -47,12 +47,24 @@ def main():
     # model_name = args.model_name
     # data_store = args.step_output
     # Pass model file to next step
+    ws = run.experiment.workspace
+
+    datastore = Datastore.register_azure_blob_container(workspace=ws,
+                                                        datastore_name='modelstore',
+                                                        container_name='model',
+                                                        account_name='amldemo2398627300',
+                                                        account_key='Q88W/8T4fAq4dQnU7IjTKsTArZZylmeSbW+PFFr+XL87cbdwLzkmqN+LHzq/W1sN6/hkd2EqFj5+JM9Iln4lUg==',
+                                                        create_if_not_exists=True)
+
+    # ws.set_default_datastore('ypfdatastore')
+    # # datastore = ws.get_default_datastore()
+    # # print(datastore)
+
     os.makedirs("./model", exist_ok=True)
     # model_output_path = os.path.join(step_output_path, model_name)
     joblib.dump(value=clf, filename="./model/model.pkl")
-    ws = run.experiment.workspace
-    data_store = Datastore.get_default(ws)
-    data_store.upload(src_dir="./model", target_path=".", overwrite=True)
+    # data_store = Datastore.get_default(ws)
+    datastore.upload(src_dir="./model", target_path=".", overwrite=True)
     # Also upload model file to run outputs for history
     # os.makedirs('outputs', exist_ok=True)
     # output_path = os.path.join('outputs', model_output_path)
@@ -62,7 +74,7 @@ def main():
     print(f"tags now present for run: {run.tags}")
     print("****************************************")
     print(os.listdir("./"))
-    print(data_store.name)
+    print(datastore.name)
     print("****************************************")
 
 
