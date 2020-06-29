@@ -54,7 +54,7 @@ def main():
     # Also upload model file to run outputs for history
     os.makedirs('outputs', exist_ok=True)
     output_path = os.path.join('outputs', model_name)
-    joblib.dump(value=model, filename=output_path)
+    joblib.dump(value=clf, filename=output_path)
 
     run.tag("run_type", value="train")
     print(f"tags now present for run: {run.tags}")
