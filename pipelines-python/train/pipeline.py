@@ -32,19 +32,26 @@ training_dataset = Dataset.get_by_name(ws, args.dataset)
 training_dataset_parameter = PipelineParameter(name="training_dataset", default_value=training_dataset)
 training_dataset_consumption = DatasetConsumptionConfig("training_dataset", training_dataset_parameter).as_mount()
 
+pipeline_data = PipelineData(
+    "pipeline_data", datastore=aml_workspace.get_default_datastore()
+)
+model_name_param = PipelineParameter(name="model_name", default_value="model.pkl")
+
 train_step = PythonScriptStep(name="train-step",
                         runconfig=runconfig,
                         source_directory=args.source_directory,
                         script_name=runconfig.script,
                         arguments=['--data-path', training_dataset_consumption],
                         inputs=[training_dataset_consumption],
+                        outputs=[pipeline_data],
                         allow_reuse=False)
 
 register_step = PythonScriptStep(name="Register Model ",
                         runconfig=runconfig,
                         script_name="./register.py",
                         source_directory=args.source_directory,
-                        arguments=["--model_name", "model.pkl", "--step_input", "./outputs/", ],  # NOQA: E501
+                        inputs=[pipeline_data],
+                        arguments=["--model_name", model_name_param, "--step_input", pipeline_data, ],  # NOQA: E501
                         allow_reuse=False)
 
 register_step.run_after(train_step)
