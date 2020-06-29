@@ -44,9 +44,7 @@ register_step = PythonScriptStep(name="Register Model ",
                         runconfig=runconfig,
                         script_name=runconfig.register_step,
                         source_directory=args.source_directory,
-                        inputs=[pipeline_data],
                         arguments=["--model_name", "model.pkl", "--step_input", "./outputs/", ],  # NOQA: E501
-                        runconfig=run_config,
                         allow_reuse=False)
 
 
