@@ -1,5 +1,4 @@
-train_script: train.py
-register_step: register.py
+script: train.py
 arguments: [--data-path, /data]
 target: gpu-cluster
 framework: Python
