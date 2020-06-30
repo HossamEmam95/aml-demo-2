@@ -22,17 +22,17 @@ model = Model(ws, "model.pkl")
 
 # Prepare AKS
 aks_service_name = "aml-demo-python"
-compute_list = ws.compute_targets()
-aks_target, = (c for c in compute_list if c.name == aks_service_name)
+# compute_list = ws.compute_targets()
+# aks_target, = (c for c in compute_list if c.name == aks_service_name)
+#
+# # create if not exist
+# if not aks_target:
+prov_config = AksCompute.provisioning_configuration()
 
-# create if not exist
-if not aks_target:
-    prov_config = AksCompute.provisioning_configuration()
+aks_target = ComputeTarget.create(
+        workspace=ws, name=aks_service_name, provisioning_configuration=prov_config)
 
-    aks_target = ComputeTarget.create(
-            workspace=ws, name=aks_service_name, provisioning_configuration=prov_config)
-
-    aks_target.wait_for_completion(show_output=True)
+aks_target.wait_for_completion(show_output=True)
 
 
 inference_config = InferenceConfig(entry_script='./score.py', environment=myenv)
