@@ -4,7 +4,9 @@ from azureml.core.model import Model
 from azureml.core.compute import AksCompute, ComputeTarget
 from azureml.core.model import InferenceConfig
 from azureml.core.webservice import Webservice, AksWebservice
+from azureml.core.authentication import AzureCliAuthentication
 
+cli_auth = AzureCliAuthentication()
 run = Run.get_context()
 ws = run.experiment.workspace
 
