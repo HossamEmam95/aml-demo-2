@@ -35,13 +35,16 @@ training_dataset_consumption = DatasetConsumptionConfig("training_dataset", trai
 pipeline_data = PipelineData(
     "pipeline_data", datastore=ws.get_default_datastore()
 )
+data_store = Datastore.get_default(ws)
+
+
 model_name_param = PipelineParameter(name="model_name", default_value="model.pkl")
 
 train_step = PythonScriptStep(name="train-step",
                         runconfig=runconfig,
                         source_directory=args.source_directory,
                         script_name=runconfig.script,
-                        arguments=['--data-path', training_dataset_consumption, "--step_output", pipeline_data, "--model_name", "model.pkl", ],
+                        arguments=['--data-path', training_dataset_consumption, "--step_output", "data_store", "--model_name", "model.pkl", ],
                         inputs=[training_dataset_consumption],
                         outputs=[pipeline_data],
                         allow_reuse=False)
@@ -51,11 +54,19 @@ register_step = PythonScriptStep(name="Register Model ",
                         script_name="./register.py",
                         source_directory=args.source_directory,
                         inputs=[pipeline_data],
-                        arguments=["--model_name", model_name_param, "--step_input", pipeline_data, "--model_name", "model.pkl", ],  # NOQA: E501
+                        arguments=["--model_name", model_name_param, "--step_input", "data_store", "--model_name", "model.pkl", ],  # NOQA: E501
                         allow_reuse=False)
 
+deploy_step = PythonScriptStep(name="Deploy On AKS",
+                               runconfig=runconfig,
+                               source_directory=args.source_directory,
+                               script_name="./inference-aks.py",
+                               allow_reuse=False)
+
 register_step.run_after(train_step)
-steps = [train_step, register_step]
+deploy_step.run_after(register_step)
+
+steps = [train_step, register_step, deploy_step]
 
 print('Creating and validating pipeline')
 pipeline = Pipeline(workspace=ws, steps=steps)
