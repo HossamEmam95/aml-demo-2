@@ -8,8 +8,15 @@ from azureml.core.webservice import Webservice, AksWebservice
 run = Run.get_context()
 ws = run.experiment.workspace
 
-myenv = Environment.from_conda_specification(name='env', file_path='aml_config/inference-config.yml')
-myenv.register(workspace=ws)
+from azureml.core.conda_dependencies import CondaDependencies
+
+conda_deps = CondaDependencies(conda_dependencies_file_path="aml_config/inference-conda.yml")
+myenv = Environment(name='myenv')
+myenv.python.conda_dependencies = conda_deps
+
+# myenv = Environment.from_conda_specification(name='env', file_path='aml_config/inference-config.yml')
+
+# myenv.register(workspace=ws)
 
 model = Model(ws, "model.pkl")
 
@@ -28,9 +35,7 @@ if not aks_target:
     aks_target.wait_for_completion(show_output=True)
 
 
-inference_config = InferenceConfig(entry_script='score.py', enable_gpu=False, source_directory="./",
-                                   conda_file="aml_config/inference-config.yml", runtime="Python",
-                                   environment=myenv)
+inference_config = InferenceConfig(entry_script='./score.py', environment=myenv)
 
 aks_config = AksWebservice.deploy_configuration()
 
