@@ -81,20 +81,20 @@ steps:
       pytest --junitxml=junit/TEST-training-pipeline.xml pipelines-python/train/
 
 - task: AzureCLI@1
-      displayName: "Deploy to AKS (CLI)"
-      inputs:
-        azureSubscription: '$(azure_service_connection_name)'
-        scriptLocation: inlineScript
-        workingDirectory: $(Build.SourcesDirectory)
-        inlineScript: |
-          set -e # fail on error
+  displayName: "Deploy to AKS (CLI)"
+  inputs:
+    azureSubscription: '$(azure_service_connection_name)'
+    scriptLocation: inlineScript
+    workingDirectory: $(Build.SourcesDirectory)
+    inlineScript: |
+      set -e # fail on error
 
-          az ml model deploy --name $(AKS_DEPLOYMENT_NAME) --model '$(MODEL_NAME) \
-          --compute-target $(AKS_COMPUTE_NAME) \
-          --ic $(Build.SourcesDirectory)/src/model1/aml_config/inference_config.yml \
-          --dc $(Build.SourcesDirectory)/src/model1/aml_config/config-aks.yml \
-          -g $(resourcegroup) --workspace-name $(workspace) \
-          --overwrite -v
+      az ml model deploy --name $(AKS_DEPLOYMENT_NAME) --model '$(MODEL_NAME) \
+      --compute-target $(AKS_COMPUTE_NAME) \
+      --ic $(Build.SourcesDirectory)/src/model1/aml_config/inference_config.yml \
+      --dc $(Build.SourcesDirectory)/src/model1/aml_config/config-aks.yml \
+      -g $(resourcegroup) --workspace-name $(workspace) \
+      --overwrite -v
 
 - task: PublishTestResults@2
   displayName: 'Publish test results from pipeline test run'
