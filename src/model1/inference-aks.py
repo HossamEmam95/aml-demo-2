@@ -23,11 +23,11 @@ ws = Workspace.get(
 model = Model(ws, "model.pkl")
 # AzureCliAuthentication()
 
-conda_deps = CondaDependencies(conda_dependencies_file_path="aml_config/inference-conda.yml")
+conda_deps = CondaDependencies(conda_dependencies_file_path="src/model1/aml_config/inference-conda.yml")
 myenv = Environment(name='myenv')
 myenv.python.conda_dependencies = conda_deps
 
-inf_config = InferenceConfig(entry_script='score.py', environment=myenv)
+inf_config = InferenceConfig(entry_script='src/model1/score.py', environment=myenv)
 
 prov_config = AksCompute.provisioning_configuration()
 aks_name = 'my-aks-pipeline'
