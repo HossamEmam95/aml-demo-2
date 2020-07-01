@@ -20,7 +20,8 @@ ws = Workspace.get(
     auth=cli_auth
 )
 
-model = Model(ws, "model.pkl")
+model = Model(ws, "aml-demo")
+print(model.name,  model.version)
 # AzureCliAuthentication()
 
 conda_deps = CondaDependencies(conda_dependencies_file_path="src/model1/aml_config/inference-conda.yml")
