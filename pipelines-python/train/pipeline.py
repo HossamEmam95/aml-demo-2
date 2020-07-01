@@ -64,9 +64,9 @@ register_step = PythonScriptStep(name="Register Model",
 #                                allow_reuse=False)
 
 register_step.run_after(train_step)
-deploy_step.run_after(register_step)
+# deploy_step.run_after(register_step)
 
-steps = [train_step, register_step, deploy_step]
+steps = [train_step, register_step]
 
 print('Creating and validating pipeline')
 pipeline = Pipeline(workspace=ws, steps=steps)
