@@ -49,7 +49,7 @@ train_step = PythonScriptStep(name="train-step",
                         outputs=[pipeline_data],
                         allow_reuse=False)
 
-register_step = PythonScriptStep(name="Register Model ",
+register_step = PythonScriptStep(name="Register Model",
                         runconfig=runconfig,
                         script_name="./register.py",
                         source_directory=args.source_directory,
@@ -57,11 +57,11 @@ register_step = PythonScriptStep(name="Register Model ",
                         arguments=["--model_name", model_name_param, "--step_input", "data_store", "--model_name", "model.pkl", ],  # NOQA: E501
                         allow_reuse=False)
 
-deploy_step = PythonScriptStep(name="Deploy On AKS",
-                               runconfig=runconfig,
-                               source_directory=args.source_directory,
-                               script_name="./inference-aks.py",
-                               allow_reuse=False)
+# deploy_step = PythonScriptStep(name="Deploy On AKS",
+#                                runconfig=runconfig,
+#                                source_directory=args.source_directory,
+#                                script_name="./inference-aks.py",
+#                                allow_reuse=False)
 
 register_step.run_after(train_step)
 deploy_step.run_after(register_step)
