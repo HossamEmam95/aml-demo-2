@@ -28,8 +28,6 @@ aks_name = 'my-aks-pipeline'
 #                                   name=aks_name,
 #                                   provisioning_configuration=prov_config)
 
-# run = Run.get_context()
-run.register_model(model_name='model.pkl')
 
 aks_target = ComputeTarget(ws, "my-aks-9")
 

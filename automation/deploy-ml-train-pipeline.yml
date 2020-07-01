@@ -87,7 +87,7 @@ steps:
     scriptLocation: inlineScript
     workingDirectory: $(Build.SourcesDirectory)
     inlineScript: |
-      az ml model deploy -n test-deploy-aks --ct aks-cluster -m aml-model:$latest --ic $(Build.SourcesDirectory)/src/model1/aml_config/inference-config.yml --dc $(Build.SourcesDirectory)/src/model1/aml_config/config-aks.yml --overwrite
+      python $(Build.SourcesDirectory)/src/model1/inference-aks.py 
 
 - task: PublishTestResults@2
   displayName: 'Publish test results from pipeline test run'
