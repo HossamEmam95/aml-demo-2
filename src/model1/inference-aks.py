@@ -20,7 +20,7 @@ ws = Workspace.get(
     auth=cli_auth
 )
 
-model = Model(ws, "aml-demo")
+model = Model(ws, "aml-model")
 print(model.name,  model.version)
 # AzureCliAuthentication()
 
