@@ -24,9 +24,12 @@ inf_config = InferenceConfig(entry_script='score.py', environment=myenv)
 prov_config = AksCompute.provisioning_configuration()
 aks_name = 'my-aks-pipeline'
 # Create the cluster
-aks_target = ComputeTarget.create(workspace=ws,
-                                  name=aks_name,
-                                  provisioning_configuration=prov_config)
+# aks_target = ComputeTarget.create(workspace=ws,
+#                                   name=aks_name,
+#                                   provisioning_configuration=prov_config)
+
+aks_target = ComputeTarget(ws, "my-aks-9")
+
 
 aks_config = AksWebservice.deploy_configuration()
 aks_service_name ='aks-service-pipeline'
