@@ -1,4 +1,4 @@
-from azureml.core import Run
+from azureml.core import Workspace
 from azureml.core.compute import AksCompute, ComputeTarget
 from azureml.core.webservice import AksWebservice
 from azureml.core.model import Model
@@ -7,13 +7,21 @@ from azureml.core import Environment
 from azureml.core.conda_dependencies import CondaDependencies
 from azureml.core.authentication import AzureCliAuthentication
 
-
-
-run = Run.get_context()
-ws = run.experiment.workspace
+workspace_name = "aml-demo"
+subscription_id = "b56a4ef1-6013-4e4d-b5f0-7e0010cec2c9"
+resource_group = "hossam-aml-demo"
+# run = Run.get_context()
+# ws = run.experiment.workspace
+cli_auth = AzureCliAuthentication()
+ws = Workspace.get(
+    name=workspace_name,
+    subscription_id=subscription_id,
+    resource_group=resource_group,
+    auth=cli_auth
+)
 
 model = Model(ws, "model.pkl")
-AzureCliAuthentication()
+# AzureCliAuthentication()
 
 conda_deps = CondaDependencies(conda_dependencies_file_path="aml_config/inference-conda.yml")
 myenv = Environment(name='myenv')
