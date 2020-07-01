@@ -6,6 +6,7 @@ from azureml.core.model import InferenceConfig
 from azureml.core import Environment
 from azureml.core.conda_dependencies import CondaDependencies
 from azureml.core.authentication import AzureCliAuthentication
+import random
 
 workspace_name = "aml-demo"
 subscription_id = "b56a4ef1-6013-4e4d-b5f0-7e0010cec2c9"
@@ -42,7 +43,7 @@ aks_target = ComputeTarget(ws, "my-aks-9")
 
 
 aks_config = AksWebservice.deploy_configuration()
-aks_service_name ='aks-service-pipeline'
+aks_service_name ='aks-service-pipeline' + str(random.randint(0, 999))
 
 aks_service = Model.deploy(workspace=ws,
                            name=aks_service_name,
