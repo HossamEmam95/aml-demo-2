@@ -1,5 +1,5 @@
-entryScript: score.py
+entryScript: src/model1/score.py
 sourceDirectory: ./
 runtime: python
-condaFile: aml_config/inference-conda.yml
+condaFile: src/model1/aml_config/inference-conda.yml
 enableGpu: False
