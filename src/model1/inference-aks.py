@@ -43,7 +43,7 @@ aks_target = ComputeTarget(ws, "my-aks-9")
 
 
 aks_config = AksWebservice.deploy_configuration()
-aks_service_name ='aks-service-pipeline' + str(random.randint(0, 999))
+aks_service_name = 'aks-service-pipeline' + str(random.randint(0, 999))
 
 aks_service = Model.deploy(workspace=ws,
                            name=aks_service_name,
@@ -52,7 +52,7 @@ aks_service = Model.deploy(workspace=ws,
                            deployment_config=aks_config,
                            deployment_target=aks_target)
 
-aks_service.wait_for_deployment(show_output = True)
+aks_service.wait_for_deployment(show_output=True)
 print(aks_service.state)
 
 
