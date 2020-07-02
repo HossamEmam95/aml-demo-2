@@ -2,7 +2,7 @@
 
 ## Preparing the real-time inferencing code
 
-1. Adapt conda enviroment for inferencing
+1. Adapt Conda environment for inferencing
     * Copy your dependencies from [`aml_config/train-conda.yml`](../src/model1/aml_config/train-conda.yml) to [`aml_config/inference-conda.yml`](../src/model1/aml_config/inference-conda.yml)
     * If you have different dependencies for inferencing, you can adapt them in [`aml_config/inference-conda.yml`](../src/model1/aml_config/train-conda.yml)
 
@@ -45,12 +45,12 @@
     pytest tests/
     ```
 
-## Running real-time inferecing locally
+## Running real-time inferencing  locally
 
 1. Deploy model as a RESTful service to local host 
     * Deploy locally to Docker:
     ```
-    az ml model deploy -n test-deploy -m demo-model:1 --ic aml_config/inference-config.yml --dc aml_config/deployment-config-aci.yml --runtime python --compute-type local --port 32000 --overwrite
+    az ml model deploy -n test-deploy -m demo-model:1 --ic aml_config/inference-config.yml --runtime python --compute-type local --port 32000 --overwrite
     ```
     * The model is referenced by `model_name:model_version` (in this case `demo-model` with version `1`)
 
@@ -86,15 +86,15 @@
     az ml service delete --name test-deploy
     ```
 
-## Running real-time inferecing on Azure
+## Running real-time inferencing  on Azure
 
 1. Deploy model to ACI (Azure Container Instances) for testing the model in Azure
     * Finally, you can test deploying the model to ACI:
     ```
-    az ml model deploy -n test-deploy-aci -m demo-model:1 --ic aml_config/inference-config.yml --dc aml_config/deployment-config-aci.yml --overwrite
+    az ml model deploy -n test-deploy-aci -m demo-model:1 --ic aml_config/inference-config.yml --overwrite
     ```
     * Test using VSCode with `rest-client` (same as above)
-      * In the AML Studio UI, goto `Endpoints -> test-deploy-aci -> Consume` and note the `REST endpoint` and `Primary key`
+      * In the AML Studio UI, go to `Endpoints -> test-deploy-aci -> Consume` and note the `REST endpoint` and `Primary key`
       * Open [`aci-endpoint.http`](../src/model1/tests/aci-endpoint.http) in VSCode, update your `URL` and `Authorization key`:
       ```
       POST http://d42afe74-eb70-4dc0-adb9-xxxxxxxxx.westeurope.azurecontainer.io/score HTTP/1.1
@@ -116,7 +116,7 @@
     az ml model deploy -n test-deploy-aks --ct aks-cluster -m demo-model:1 --ic aml_config/inference-config.yml --dc aml_config/deployment-config-aks.yml --overwrite
     ```
     * Test using VSCode with `rest-client` (same as above)
-      * In the AML Studio UI, goto `Endpoints -> test-deploy-aks -> Consume` and note the `REST endpoint` and `Primary key`
+      * In the AML Studio UI, go to `Endpoints -> test-deploy-aks -> Consume` and note the `REST endpoint` and `Primary key`
       * Open [`aks-endpoint.http`](../src/model1/tests/aks-endpoint.http) in VSCode, update your `URL` and `Authorization key`:
       ```
       POST http://url-to-your-aks-endpoint/score HTTP/1.1

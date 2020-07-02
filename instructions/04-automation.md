@@ -27,10 +27,22 @@ Next, we'll authenticate from Azure DevOps to AML, so that Azure DevOps can make
 
 This pipeline is used to the automatically deploy the Python-based ML training pipeline we've created in the last step.
 
+first you need to add some configurations: 
+
+* (Configuration step) open the file `/src/model1/aml_config/config.json` and complete the DataStore and Model data, you can find the DataStore data when you open your `workspace --> overview --> storage account` and find the account name from `access keys` on the storage account page, other variables are from you choice and the `dataset_id` you can get it following the same instructions as before. 
+
+  <img src="C:\Users\v-hoemam\Desktop\Work\MLOps\aml-demo-2\instructions\media\AML-overview.PNG" alt="aml-overview" style="zoom:70%;" />
+
+  
+
+  <img src="C:\Users\v-hoemam\Desktop\Work\MLOps\aml-demo-2\instructions\media\storage_access _keys.PNG" style="zoom:67%;" />
+
+  
+
 1. Select `Pipelines --> Pipelines` and select `New pipeline`
 1. (Connect step) - Choose `GitHub` and authenticate if required
 1. (Select step) - Select your repo
-1. (Configure step) - Select `Existing Azure Pipelines YAML file` and choose the path to the file `/automation/deploy-ml-train-pipeline.yml`
+1. (Configure step) - Select `Existing Azure Pipelines YAML file` and choose the path to the file `/automation/deploy-ml-train-pipeline.yml` 
 1. In the upcoming preview window, update the `variables` section (if you've used the defaults, this should not require any changes): 
   ```yaml
   variables:
@@ -46,6 +58,7 @@ This pipeline is used to the automatically deploy the Python-based ML training p
     * Create the AML Compute target
     * Create pipeline for model training
     * Execute tests for running the training pipeline using a small training dataset (functional test)
+    * deploy on AKS
     * Publish the test results
 1. Select `Save and run` to save run the pipeline.
 
