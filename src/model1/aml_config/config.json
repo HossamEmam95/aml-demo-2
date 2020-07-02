@@ -1,0 +1,12 @@
+{
+  "Model_Data": {
+    "model_name": "model.pkl"
+  },
+  "DataStore_Data": {
+    "datastore_name":  "modelstore",
+    "container_name": "model",
+    "account_name": "amldemo2398627300",
+    "account_key": "Q88W/8T4fAq4dQnU7IjTKsTArZZylmeSbW+PFFr+XL87cbdwLzkmqN+LHzq/W1sN6/hkd2EqFj5+JM9Iln4lUg==",
+    "target_path": "/model"
+  }
+}

@@ -1,15 +1,14 @@
-import pickle
-from azureml.core import Workspace
-from azureml.core.run import Run
+import argparse
+import json
+import pandas as pd
 import os
-from azureml.core import Workspace, Experiment, Datastore
-from sklearn.datasets import load_diabetes
-from sklearn.linear_model import Ridge
-from sklearn.metrics import mean_squared_error
+
+from azureml.core.run import Run
+from azureml.core import Datastore
+from azureml.core.authentication import AzureCliAuthentication
+
 from sklearn.model_selection import train_test_split
 from sklearn.externals import joblib
-from azureml.core.authentication import AzureCliAuthentication
-from sklearn.pipeline import Pipeline
 from sklearn.linear_model import LogisticRegression
 from sklearn.compose import ColumnTransformer
 from sklearn.pipeline import Pipeline
@@ -19,30 +18,15 @@ from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
 
 
-import numpy as np
-import json
-import subprocess
-from typing import Tuple, List
-import argparse
-import pandas as pd
-
-
-
-# run_history_name = 'devops-ai'
-# os.makedirs('./outputs', exist_ok=True)
-# #ws.get_details()
-# Start recording results to AML
-# run = Run.start_logging(workspace = ws, history_name = run_history_name)
-# run = Run.get_submitted_run()
-
 def getRuntimeArgs():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data-path', type=str)
+    parser.add_argument('--data_path', type=str)
     parser.add_argument('--step_output', type=str)
     parser.add_argument('--model_name', type=str)
 
     args = parser.parse_args()
     return args
+
 
 def main():
     args = getRuntimeArgs()
@@ -51,44 +35,29 @@ def main():
     credit_data_df = pd.read_csv(os.path.join(args.data_path, 'german_credit_data.csv'))
     clf = model_train(credit_data_df, run)
 
-    #copying to "outputs" directory, automatically uploads it to Azure ML
-    # output_dir = './outputs/'
-    # os.makedirs(output_dir, exist_ok=True)
-    # joblib.dump(value=clf, filename=os.path.join(output_dir, 'model.pkl'))
-    # model_name = args.model_name
-    # data_store = args.step_output
-    # Pass model file to next step
     ws = run.experiment.workspace
-    cli_auth = AzureCliAuthentication()
+    AzureCliAuthentication()
+
+    # load configs
+    with open("./src/model1/aml_config/config.json", "r") as f:
+        configs = json.load(f)
+
+    # Register Data store to save the model
+    datastore_data = configs['DataStore_Data']
     datastore = Datastore.register_azure_blob_container(workspace=ws,
-                                                        datastore_name='modelstore',
-                                                        container_name='model',
-                                                        account_name='amldemo2398627300',
-                                                        account_key='Q88W/8T4fAq4dQnU7IjTKsTArZZylmeSbW+PFFr+XL87cbdwLzkmqN+LHzq/W1sN6/hkd2EqFj5+JM9Iln4lUg==',
+                                                        datastore_name=datastore_data["datastore_name"],
+                                                        container_name=datastore_data["container_name"],
+                                                        account_name=datastore_data["account_name"],
+                                                        account_key=datastore_data["account_key"],
                                                         create_if_not_exists=True)
-
-    # ws.set_default_datastore('ypfdatastore')
-    # # datastore = ws.get_default_datastore()
-    # # print(datastore)
-
-
-    os.makedirs("./model", exist_ok=True)
-    # model_output_path = os.path.join(step_output_path, model_name)
-    joblib.dump(value=clf, filename="./model/model.pkl")
-    # data_store = Datastore.get_default(ws)
-    print(f"tags now present for run: {run.tags}")
-    print("****************************************")
-    print(os.listdir("./"))
-    print(os.listdir("./model"))
     print(datastore.name)
-    print("****************************************")
 
-    datastore.upload(src_dir="./model", target_path="model/", overwrite=True)
-    # Also upload model file to run outputs for history
-    # os.makedirs('outputs', exist_ok=True)
-    # output_path = os.path.join('outputs', model_output_path)
-    # joblib.dump(value=clf, filename=output_path)
-
+    # write model and upload it to data store
+    model_data = configs["Model_Data"]
+    os.makedirs("./model", exist_ok=True)
+    joblib.dump(value=clf, filename="./model/" + configs["model_name"])
+    print(f"tags now present for run: {run.tags}")
+    datastore.upload(src_dir="./model", target_path=datastore_data["target_path"], overwrite=True)
     run.tag("run_type", value="train")
 
 
