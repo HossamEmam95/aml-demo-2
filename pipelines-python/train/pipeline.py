@@ -1,8 +1,7 @@
-import os
+import json
 import argparse
 import azureml.core
-from azureml.core import Workspace, Experiment, Datastore, Dataset, RunConfiguration
-from azureml.core.compute import AmlCompute, ComputeTarget
+from azureml.core import Workspace, Datastore, Dataset, RunConfiguration
 from azureml.pipeline.core import Pipeline, PipelineData, PipelineParameter
 from azureml.pipeline.steps import PythonScriptStep
 from azureml.data.dataset_consumption_config import DatasetConsumptionConfig
@@ -37,8 +36,13 @@ pipeline_data = PipelineData(
 )
 data_store = Datastore.get_default(ws)
 
+with open("aml_config/config.json", "r") as f:
+    configs = json.load(f)
 
-model_name_param = PipelineParameter(name="model_name", default_value="model.pkl")
+datastore_data = configs['DataStore_Data']
+model_data = configs["Model_Data"]
+
+model_name_param = PipelineParameter(name="model_name", default_value=model_data["model_name"])
 
 train_step = PythonScriptStep(name="train-step",
                         runconfig=runconfig,
@@ -54,17 +58,11 @@ register_step = PythonScriptStep(name="Register Model",
                         script_name="./register.py",
                         source_directory=args.source_directory,
                         inputs=[pipeline_data],
-                        arguments=["--model_name", model_name_param, "--step_input", "data_store", "--model_name", "aml-model", ],  # NOQA: E501
+                        arguments=["--model_name", model_name_param, "--step_input", "data_store", "--model_name", model_data["model_name"], ],  # NOQA: E501
                         allow_reuse=False)
 
-# deploy_step = PythonScriptStep(name="Deploy On AKS",
-#                                runconfig=runconfig,
-#                                source_directory=args.source_directory,
-#                                script_name="./inference-aks.py",
-#                                allow_reuse=False)
 
 register_step.run_after(train_step)
-# deploy_step.run_after(register_step)
 
 steps = [train_step, register_step]
 
@@ -77,6 +75,3 @@ published_pipeline = pipeline.publish(args.pipeline_name)
 
 # Output pipeline_id in specified format which will convert it to a variable in Azure DevOps
 print(f'##vso[task.setvariable variable=pipeline_id]{published_pipeline.id}')
-
-#pipeline_run = Experiment(ws, 'training-pipeline').submit(pipeline)
-#pipeline_run.wait_for_completion()
