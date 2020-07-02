@@ -6,17 +6,11 @@ import joblib
 from inference_schema.schema_decorators import input_schema, output_schema
 from inference_schema.parameter_types.standard_py_parameter_type import StandardPythonParameterType
 
-
 def init():
     global model
 
     # Update to your model's filename
-    with open("src/model1/aml_config/config.json", "r") as f:
-        configs = json.load(f)
-    model_data = configs["Model_Data"]
-
-    model_filename = model_data["model_name"]
-    print(model_filename)
+    model_filename = "aml-model.pkl"
 
     # AZUREML_MODEL_DIR is injected by AML
     model_dir = os.getenv('AZUREML_MODEL_DIR')
@@ -29,7 +23,6 @@ def init():
     # Replace this line with your model loading code
     model = joblib.load(model_path)
 
-
 # Define some sample data for automatic generation of swagger interface
 input_sample = [{
     "Age": 20,
@@ -41,9 +34,8 @@ input_sample = [{
     "Credit amount": 100,
     "Duration": 48,
     "Purpose": "radio/TV"
-}]
+  }]
 output_sample = [[0.7, 0.3]]
-
 
 # This will automatically unmarshall the data parameter in the HTTP request
 @input_schema('data', StandardPythonParameterType(input_sample))
@@ -58,18 +50,3 @@ def run(data):
     except Exception as e:
         error = str(e)
         return error
-
-if __name__ == "__main__":
-    init()
-    input_sample = [{
-        "Age": 20,
-        "Sex": "male",
-        "Job": 0,
-        "Housing": "own",
-        "Saving accounts": "little",
-        "Checking account": "little",
-        "Credit amount": 100,
-        "Duration": 48,
-        "Purpose": "radio/TV"
-    }]
-    print(run(json.dumps(input_sample)))
