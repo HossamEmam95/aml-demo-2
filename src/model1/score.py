@@ -11,7 +11,7 @@ def init():
     global model
 
     # Update to your model's filename
-    with open("aml_config/config.json", "r") as f:
+    with open("src/model1/aml_config/config.json", "r") as f:
         configs = json.load(f)
     model_data = configs["Model_Data"]
 
