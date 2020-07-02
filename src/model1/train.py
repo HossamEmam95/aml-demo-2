@@ -39,7 +39,7 @@ def main():
     AzureCliAuthentication()
 
     # load configs
-    with open("./src/model1/aml_config/config.json", "r") as f:
+    with open("aml_config/config.json", "r") as f:
         configs = json.load(f)
 
     # Register Data store to save the model
