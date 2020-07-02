@@ -16,6 +16,7 @@ def init():
     model_data = configs["Model_Data"]
 
     model_filename = model_data["model_name"]
+    print(model_filename)
 
     # AZUREML_MODEL_DIR is injected by AML
     model_dir = os.getenv('AZUREML_MODEL_DIR')
@@ -57,3 +58,18 @@ def run(data):
     except Exception as e:
         error = str(e)
         return error
+
+if __name__ == "__main__":
+    init()
+    input_sample = [{
+        "Age": 20,
+        "Sex": "male",
+        "Job": 0,
+        "Housing": "own",
+        "Saving accounts": "little",
+        "Checking account": "little",
+        "Credit amount": 100,
+        "Duration": 48,
+        "Purpose": "radio/TV"
+    }]
+    print(run(json.dumps(input_sample)))
