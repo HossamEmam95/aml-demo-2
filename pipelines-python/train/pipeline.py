@@ -36,7 +36,7 @@ pipeline_data = PipelineData(
 )
 data_store = Datastore.get_default(ws)
 
-with open("aml_config/config.json", "r") as f:
+with open("src/model1/aml_config/config.json", "r") as f:
     configs = json.load(f)
 
 datastore_data = configs['DataStore_Data']
@@ -48,7 +48,7 @@ train_step = PythonScriptStep(name="train-step",
                         runconfig=runconfig,
                         source_directory=args.source_directory,
                         script_name=runconfig.script,
-                        arguments=['--data-path', training_dataset_consumption, "--step_output", "data_store", "--model_name", "aml-model", ],
+                        arguments=['--data-path', training_dataset_consumption, "--step_output", "data_store", "--model_name", model_data["model_name"], ],
                         inputs=[training_dataset_consumption],
                         outputs=[pipeline_data],
                         allow_reuse=False)
