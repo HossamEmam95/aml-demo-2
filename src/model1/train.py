@@ -55,7 +55,7 @@ def main():
     # write model and upload it to data store
     model_data = configs["Model_Data"]
     os.makedirs("./model", exist_ok=True)
-    joblib.dump(value=clf, filename="./model/" + configs["model_name"])
+    joblib.dump(value=clf, filename="./model/" + model_data["model_name"])
     print(f"tags now present for run: {run.tags}")
     datastore.upload(src_dir="./model", target_path=datastore_data["target_path"], overwrite=True)
     run.tag("run_type", value="train")
