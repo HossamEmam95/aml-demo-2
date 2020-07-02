@@ -6,11 +6,12 @@ import joblib
 from inference_schema.schema_decorators import input_schema, output_schema
 from inference_schema.parameter_types.standard_py_parameter_type import StandardPythonParameterType
 
+
 def init():
     global model
 
     # Update to your model's filename
-    model_filename = "aml-model.pkl"
+    model_filename = "model.pkl"
 
     # AZUREML_MODEL_DIR is injected by AML
     model_dir = os.getenv('AZUREML_MODEL_DIR')
@@ -23,6 +24,7 @@ def init():
     # Replace this line with your model loading code
     model = joblib.load(model_path)
 
+
 # Define some sample data for automatic generation of swagger interface
 input_sample = [{
     "Age": 20,
@@ -34,8 +36,9 @@ input_sample = [{
     "Credit amount": 100,
     "Duration": 48,
     "Purpose": "radio/TV"
-  }]
+}]
 output_sample = [[0.7, 0.3]]
+
 
 # This will automatically unmarshall the data parameter in the HTTP request
 @input_schema('data', StandardPythonParameterType(input_sample))
