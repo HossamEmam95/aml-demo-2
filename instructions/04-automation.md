@@ -39,6 +39,8 @@ first you need to add some configurations:
 
   
 
+* go to `src/model1/score.py` and change the `model_filename` variable with your model name.
+
 1. Select `Pipelines --> Pipelines` and select `New pipeline`
 1. (Connect step) - Choose `GitHub` and authenticate if required
 1. (Select step) - Select your repo
