@@ -1,6 +1,7 @@
 {
   "Model_Data": {
-    "model_name": "model.pkl"
+    "model_name": "model.pkl",
+    "dataset_id": "8f63a3b1-2220-497c-aa9f-fdde6988ea0d"
   },
   "DataStore_Data": {
     "datastore_name":  "modelstore",
