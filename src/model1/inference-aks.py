@@ -18,6 +18,7 @@ def getRuntimeArgs():
     parser.add_argument("--subscription_id", type=str)
     parser.add_argument("--resource_group", type=str)
     parser.add_argument("--aks_name", type=str)
+    parser.add_argument("--model_name", type=str)
 
     args = parser.parse_args()
     return args
@@ -40,11 +41,7 @@ ws = Workspace.get(
     auth=cli_auth
 )
 
-with open("aml_config/config.json", "r") as f:
-    configs = json.load(f)
-model_data = configs["Model_Data"]
-
-model = Model(ws, model_data["model_name"])
+model = Model(ws, args.model_name)
 print(model.name,  model.version)
 # AzureCliAuthentication()
 

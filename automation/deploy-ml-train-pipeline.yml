@@ -19,6 +19,7 @@ variables:
   AKS_DEPLOYMENT_NAME: "aks-deploy-pipeline"
   AKS_COMPUTE_NAME: "my-aks-9"
   SUBSCRIPTION_ID: "b56a4ef1-6013-4e4d-b5f0-7e0010cec2c9"
+  model_name: "aml-model.pkl"
 
   # Azure Resource Manager connection created during pipeline creation
   azure_service_connection_name: 'aml-demo'
@@ -88,7 +89,7 @@ steps:
     scriptLocation: inlineScript
     workingDirectory: $(Build.SourcesDirectory)
     inlineScript: |
-      python $(Build.SourcesDirectory)/src/model1/inference-aks.py --workspace_name $(workspace) --subscription_id $(SUBSCRIPTION_ID) --resource_group $(resourcegroup) --aks_name $(AKS_COMPUTE_NAME)
+      python $(Build.SourcesDirectory)/src/model1/inference-aks.py --workspace_name $(workspace) --subscription_id $(SUBSCRIPTION_ID) --resource_group $(resourcegroup) --aks_name $(AKS_COMPUTE_NAME) --model_name $(model_name)
 
 - task: PublishTestResults@2
   displayName: 'Publish test results from pipeline test run'
