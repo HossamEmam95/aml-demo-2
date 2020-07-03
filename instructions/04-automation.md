@@ -54,12 +54,18 @@ first you need to add some configurations:
     pipeline_name: 'training-pipeline'
     dataset: 'german-credit-dataset'
     dataset_test: 'german-credit-ci-test' # Dataset used for testing the training pipeline
+    MODEL_NAME: "aml-model.pkl"
+    AKS_DEPLOYMENT_NAME: "aks-deploy-pipeline"
+    AKS_COMPUTE_NAME: "my-aks-9"
+    SUBSCRIPTION_ID: "b56a4ef1-6013-4e4d-b5f0-7e0010cec2c9"
   ```
 1. Review the YAML file, this CI/CD pipeline has four key steps:
     * Attach folder to workspace
     * Create the AML Compute target
     * Create pipeline for model training
     * Execute tests for running the training pipeline using a small training dataset (functional test)
+    * Register Model
+    * Deploy on ACI
     * deploy on AKS
     * Publish the test results
 1. Select `Save and run` to save run the pipeline.
