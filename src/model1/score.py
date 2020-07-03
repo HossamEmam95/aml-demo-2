@@ -11,7 +11,7 @@ def init():
     global model
 
     # Update to your model's filename
-    model_filename = "model.pkl"
+    model_filename = "aml-model.pkl"
 
     # AZUREML_MODEL_DIR is injected by AML
     model_dir = os.getenv('AZUREML_MODEL_DIR')
