@@ -15,8 +15,8 @@ variables:
   pipeline_name: 'train-register'
   dataset: 'training_data'
   dataset_test: 'training_data' # Dataset used for testing the training pipeline
-  MODEL_NAME: "aml-model.pkl"
-  AKS_DEPLOYMENT_NAME: "aks-deploy-pipeline"
+  MODEL_NAME: "test_model.pkl"
+  AKS_DEPLOYMENT_NAME: "aks-deploy-pipeline2"
   AKS_COMPUTE_NAME: "my-aks-9"
   SUBSCRIPTION_ID: "b56a4ef1-6013-4e4d-b5f0-7e0010cec2c9"
 

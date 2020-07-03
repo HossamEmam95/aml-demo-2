@@ -11,7 +11,7 @@ def init():
     global model
 
     # Update to your model's filename
-    model_filename = "aml-model.pkl"
+    model_filename = "test_model.pkl"
 
     # AZUREML_MODEL_DIR is injected by AML
     model_dir = os.getenv('AZUREML_MODEL_DIR')
@@ -46,7 +46,7 @@ output_sample = [[0.7, 0.3]]
 def run(data):
     try:
         input_df = pd.DataFrame(data)
-        proba = model.predict_proba(input_df)
+        proba = model.predict(input_df)
 
         result = {"predict_proba": proba.tolist()}
         return result
