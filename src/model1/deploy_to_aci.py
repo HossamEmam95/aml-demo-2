@@ -30,11 +30,11 @@ try:
 except WebserviceException:
     pass
 
-conda_deps = CondaDependencies(conda_dependencies_file_path="src/model1/aml_config/inference-conda.yml")
+conda_deps = CondaDependencies(conda_dependencies_file_path="aml_config/inference-conda.yml")
 myenv = Environment(name='myenv')
 myenv.python.conda_dependencies = conda_deps
 
-inf_config = InferenceConfig(entry_script='src/model1/score.py', environment=myenv)
+inf_config = InferenceConfig(entry_script='score.py', environment=myenv)
 aci_config = AciWebservice.deploy_configuration(cpu_cores=1, memory_gb=1)
 
 service = Model.deploy(workspace=ws,
