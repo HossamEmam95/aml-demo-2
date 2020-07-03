@@ -44,7 +44,7 @@ model_data = configs["Model_Data"]
 
 model_name_param = PipelineParameter(name="model_name", default_value=model_data["model_name"])
 
-train_step = PythonScriptStep(name="train-step",
+train_step = PythonScriptStep(name="Train Model",
                         runconfig=runconfig,
                         source_directory=args.source_directory,
                         script_name=runconfig.script,
@@ -61,10 +61,18 @@ register_step = PythonScriptStep(name="Register Model",
                         arguments=["--model_name", model_name_param, "--step_input", "data_store", "--model_name", model_data["model_name"], ],  # NOQA: E501
                         allow_reuse=False)
 
+deply_on_aci_step = PythonScriptStep(name="Deploy Model On ACI",
+                        runconfig=runconfig,
+                        script_name="./deploy_to_aci.py",
+                        source_directory=args.source_directory,
+                        inputs=[pipeline_data],
+                        allow_reuse=False)
+
 
 register_step.run_after(train_step)
+deply_on_aci_step.run_after(register_step)
 
-steps = [train_step, register_step]
+steps = [train_step, register_step, deply_on_aci_step]
 
 print('Creating and validating pipeline')
 pipeline = Pipeline(workspace=ws, steps=steps)
