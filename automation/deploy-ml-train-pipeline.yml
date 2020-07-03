@@ -18,6 +18,7 @@ variables:
   MODEL_NAME: "demo-model"
   AKS_DEPLOYMENT_NAME: "aks-deploy-pipeline"
   AKS_COMPUTE_NAME: "my-aks-9"
+  SUBSCRIPTION_ID: "b56a4ef1-6013-4e4d-b5f0-7e0010cec2c9"
 
   # Azure Resource Manager connection created during pipeline creation
   azure_service_connection_name: 'aml-demo'
@@ -81,13 +82,13 @@ steps:
       pytest --junitxml=junit/TEST-training-pipeline.xml pipelines-python/train/
 
 - task: AzureCLI@1
-  displayName: "Deploy to AKS (CLI)"
+  displayName: "Deploy to AKS"
   inputs:
     azureSubscription: '$(azure_service_connection_name)'
     scriptLocation: inlineScript
     workingDirectory: $(Build.SourcesDirectory)
     inlineScript: |
-      python $(Build.SourcesDirectory)/src/model1/inference-aks.py 
+      python $(Build.SourcesDirectory)/src/model1/inference-aks.py --workspace_name $(workspace) --subscription_id $(SUBSCRIPTION_ID) --resource_group $(resourcegroup) --aks_name $(AKS_COMPUTE_NAME)
 
 - task: PublishTestResults@2
   displayName: 'Publish test results from pipeline test run'

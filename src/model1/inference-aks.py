@@ -1,3 +1,7 @@
+import argparse
+import random
+import json
+
 from azureml.core import Workspace
 from azureml.core.compute import AksCompute, ComputeTarget
 from azureml.core.webservice import AksWebservice
@@ -6,13 +10,28 @@ from azureml.core.model import InferenceConfig
 from azureml.core import Environment
 from azureml.core.conda_dependencies import CondaDependencies
 from azureml.core.authentication import AzureCliAuthentication
-import random
 
-workspace_name = "aml-demo"
-subscription_id = "b56a4ef1-6013-4e4d-b5f0-7e0010cec2c9"
-resource_group = "hossam-aml-demo"
-# run = Run.get_context()
-# ws = run.experiment.workspace
+
+def getRuntimeArgs():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--workspace_name", type=str)
+    parser.add_argument("--subscription_id", type=str)
+    parser.add_argument("--resource_group", type=str)
+    parser.add_argument("--aks_name", type=str)
+
+    args = parser.parse_args()
+    return args
+
+
+args = getRuntimeArgs()
+
+
+workspace_name = args.workspace_name
+subscription_id = args.subscription_id
+resource_group = args.resource_group
+aks_name = args.aks_name
+
+
 cli_auth = AzureCliAuthentication()
 ws = Workspace.get(
     name=workspace_name,
@@ -21,7 +40,11 @@ ws = Workspace.get(
     auth=cli_auth
 )
 
-model = Model(ws, "aml-model")
+with open("aml_config/config.json", "r") as f:
+    configs = json.load(f)
+model_data = configs["Model_Data"]
+
+model = Model(ws, model_data["model_name"])
 print(model.name,  model.version)
 # AzureCliAuthentication()
 
@@ -32,14 +55,8 @@ myenv.python.conda_dependencies = conda_deps
 inf_config = InferenceConfig(entry_script='src/model1/score.py', environment=myenv)
 
 prov_config = AksCompute.provisioning_configuration()
-aks_name = 'my-aks-pipeline'
-# Create the cluster
-# aks_target = ComputeTarget.create(workspace=ws,
-#                                   name=aks_name,
-#                                   provisioning_configuration=prov_config)
 
-
-aks_target = ComputeTarget(ws, "my-aks-9")
+aks_target = ComputeTarget(ws, aks_name)
 
 
 aks_config = AksWebservice.deploy_configuration()
