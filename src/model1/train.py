@@ -6,6 +6,8 @@ import os
 from azureml.core.run import Run
 from azureml.core import Datastore
 from azureml.core.authentication import AzureCliAuthentication
+from azureml.contrib.interpret.explanation.explanation_client import ExplanationClient
+from interpret.ext.blackbox import TabularExplainer
 
 from sklearn.model_selection import train_test_split
 from sklearn.externals import joblib
@@ -16,6 +18,8 @@ from sklearn.preprocessing import LabelEncoder
 from sklearn.preprocessing import OneHotEncoder
 from sklearn.preprocessing import StandardScaler
 from sklearn.impute import SimpleImputer
+
+
 
 
 def getRuntimeArgs():
@@ -106,6 +110,25 @@ def model_train(ds_df, run):
     # Log to Azure ML
     run.log('Train accuracy', train_acc)
     run.log('Test accuracy', test_acc)
+
+    # Model Explain
+    client = ExplanationClient.from_run(run)
+
+    # explain predictions on your local machine
+    # "features" and "classes" fields are optional
+    explainer = TabularExplainer(lr_clf,
+                                 X_train)
+
+    # explain overall model predictions (global explanation)
+    global_explanation = explainer.explain_global(X_test)
+
+    # uploading global model explanation data for storage or visualization in webUX
+    # the explanation can then be downloaded on any compute
+    # multiple explanations can be uploaded
+    client.upload_model_explanation(global_explanation, comment='global explanation: all features')
+    # or you can only upload the explanation object with the top k feature info
+    # client.upload_model_explanation(global_explanation, top_k=2, comment='global explanation: Only top 2 features')
+    # model explain end
 
     return lr_clf
 
