@@ -35,6 +35,7 @@ def getRuntimeArgs():
 
 def main():
     subprocess.check_call([sys.executable, "-m", "pip", "install", "azureml-interpret"])
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "azureml-contrib-services"])
     subprocess.check_call([sys.executable, "-m", "pip", "install", "azureml-contrib-interpret"])
 
     args = getRuntimeArgs()
@@ -118,6 +119,7 @@ def model_train(ds_df, run):
     # Model Explain
     from azureml.contrib.interpret.explanation.explanation_client import ExplanationClient
     from interpret.ext.blackbox import TabularExplainer
+
     client = ExplanationClient.from_run(run)
 
     # explain predictions on your local machine
