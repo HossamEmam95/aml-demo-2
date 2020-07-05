@@ -1,6 +1,6 @@
 {
   "Model_Data": {
-    "model_name": "aml-model.pkl",
+    "model_name": "test_model.pkl",
     "dataset_id": "8f63a3b1-2220-497c-aa9f-fdde6988ea0d"
   },
   "DataStore_Data": {
