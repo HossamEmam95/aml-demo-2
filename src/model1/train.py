@@ -8,8 +8,7 @@ import sys
 from azureml.core.run import Run
 from azureml.core import Datastore
 from azureml.core.authentication import AzureCliAuthentication
-from azureml.contrib.interpret.explanation.explanation_client import ExplanationClient
-from interpret.ext.blackbox import TabularExplainer
+
 
 from sklearn.model_selection import train_test_split
 from sklearn.externals import joblib
@@ -117,6 +116,8 @@ def model_train(ds_df, run):
     run.log('Test accuracy', test_acc)
 
     # Model Explain
+    from azureml.contrib.interpret.explanation.explanation_client import ExplanationClient
+    from interpret.ext.blackbox import TabularExplainer
     client = ExplanationClient.from_run(run)
 
     # explain predictions on your local machine
