@@ -2,6 +2,8 @@ import argparse
 import json
 import pandas as pd
 import os
+import subprocess
+import sys
 
 from azureml.core.run import Run
 from azureml.core import Datastore
@@ -33,6 +35,9 @@ def getRuntimeArgs():
 
 
 def main():
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "azureml-interpret"])
+    subprocess.check_call([sys.executable, "-m", "pip", "install", "azureml-contrib-interpret"])
+
     args = getRuntimeArgs()
     run = Run.get_context()
 
